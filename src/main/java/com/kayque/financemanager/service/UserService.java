@@ -4,6 +4,7 @@ import com.kayque.financemanager.dto.CreateUserRequest;
 import com.kayque.financemanager.dto.UserResponse;
 import com.kayque.financemanager.entity.User;
 import com.kayque.financemanager.entity.UserRole;
+import com.kayque.financemanager.exception.EmailAlreadyExistsException;
 import com.kayque.financemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +19,7 @@ public class UserService {
 
     public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new EmailAlreadyExistsException("Email already registered");
         }
 
         User user = User.builder()
