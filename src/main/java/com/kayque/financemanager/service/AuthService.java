@@ -6,21 +6,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import com.kayque.financemanager.security.JwtService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public LoginResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
+
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
                         request.password()
                 )
         );
 
-        return new LoginResponse("Login successful");
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        String jwt = jwtService.generateToken(userDetails);
+
+        return new LoginResponse(jwt);
     }
 }
