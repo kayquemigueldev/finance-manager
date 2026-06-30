@@ -6,6 +6,7 @@ import com.kayque.financemanager.entity.User;
 import com.kayque.financemanager.entity.UserRole;
 import com.kayque.financemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
@@ -22,7 +24,7 @@ public class UserService {
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .role(UserRole.USER)
                 .build();
 
