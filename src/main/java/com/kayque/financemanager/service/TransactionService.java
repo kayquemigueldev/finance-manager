@@ -48,4 +48,14 @@ public class TransactionService {
                 .toList();
     }
 
+    public TransactionResponse findById(Long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Transaction transaction = transactionRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        return transactionMapper.toResponse(transaction);
+    }
+
 }

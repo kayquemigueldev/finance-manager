@@ -31,4 +31,12 @@ public class TransactionController {
     public List<TransactionResponse> findAll(Authentication authentication) {
         return service.findAllByUser(authentication.getName());
     }
+
+    @GetMapping("/{id}")
+    public TransactionResponse findById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        return service.findById(id, authentication.getName());
+    }
 }
