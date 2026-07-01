@@ -12,6 +12,9 @@ import com.kayque.financemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.kayque.financemanager.dto.UpdateTransactionRequest;
+import com.kayque.financemanager.exception.CategoryNotFoundException;
+import com.kayque.financemanager.exception.TransactionNotFoundException;
+import com.kayque.financemanager.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -26,10 +29,10 @@ public class TransactionService {
 
     public TransactionResponse create(TransactionRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         Transaction transaction = transactionMapper.toEntity(request, user, category);
 
@@ -54,7 +57,7 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Transaction transaction = transactionRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
 
         return transactionMapper.toResponse(transaction);
     }

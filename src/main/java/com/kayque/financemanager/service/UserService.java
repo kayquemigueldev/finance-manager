@@ -3,13 +3,13 @@ package com.kayque.financemanager.service;
 import com.kayque.financemanager.dto.CreateUserRequest;
 import com.kayque.financemanager.dto.UserResponse;
 import com.kayque.financemanager.entity.User;
-import com.kayque.financemanager.entity.UserRole;
 import com.kayque.financemanager.exception.EmailAlreadyExistsException;
+import com.kayque.financemanager.exception.UserNotFoundException;
+import com.kayque.financemanager.mapper.UserMapper;
 import com.kayque.financemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.kayque.financemanager.mapper.UserMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -18,9 +18,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-
-
 
     public UserResponse create(CreateUserRequest request) {
 
@@ -38,8 +35,9 @@ public class UserService {
     }
 
     public UserResponse getAuthenticatedUser(String email) {
+
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return userMapper.toResponse(user);
     }

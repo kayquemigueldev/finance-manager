@@ -3,6 +3,7 @@ package com.kayque.financemanager.service;
 import com.kayque.financemanager.dto.CategoryRequest;
 import com.kayque.financemanager.dto.CategoryResponse;
 import com.kayque.financemanager.entity.Category;
+import com.kayque.financemanager.exception.CategoryNotFoundException;
 import com.kayque.financemanager.mapper.CategoryMapper;
 import com.kayque.financemanager.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class CategoryService {
     public CategoryResponse findById(Long id) {
 
         Category category = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         return mapper.toResponse(category);
     }
