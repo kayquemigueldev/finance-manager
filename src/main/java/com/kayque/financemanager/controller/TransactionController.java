@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.kayque.financemanager.dto.UpdateTransactionRequest;
 import com.kayque.financemanager.entity.TransactionType;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -32,9 +34,23 @@ public class TransactionController {
     @GetMapping
     public List<TransactionResponse> findAll(
             @RequestParam(required = false) TransactionType type,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate,
+
             Authentication authentication
     ) {
-        return service.findAllByUser(authentication.getName(), type);
+        return service.findAllByUser(
+                authentication.getName(),
+                type,
+                startDate,
+                endDate
+        );
     }
 
     @GetMapping("/{id}")
