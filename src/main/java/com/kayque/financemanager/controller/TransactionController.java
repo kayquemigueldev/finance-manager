@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.kayque.financemanager.dto.UpdateTransactionRequest;
 
 import java.util.List;
 
@@ -39,4 +40,23 @@ public class TransactionController {
     ) {
         return service.findById(id, authentication.getName());
     }
+
+    @PutMapping("/{id}")
+    public TransactionResponse update(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateTransactionRequest request,
+            Authentication authentication
+    ) {
+        return service.update(id, request, authentication.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        service.delete(id, authentication.getName());
+    }
+
 }

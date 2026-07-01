@@ -6,6 +6,7 @@ import com.kayque.financemanager.entity.Category;
 import com.kayque.financemanager.entity.Transaction;
 import com.kayque.financemanager.entity.User;
 import org.springframework.stereotype.Component;
+import com.kayque.financemanager.dto.UpdateTransactionRequest;
 
 @Component
 public class TransactionMapper {
@@ -37,4 +38,17 @@ public class TransactionMapper {
                 transaction.getUpdatedAt()
         );
     }
+
+    public void updateEntity(
+            Transaction transaction,
+            UpdateTransactionRequest request,
+            Category category
+    ) {
+        transaction.setDescription(request.description());
+        transaction.setAmount(request.amount());
+        transaction.setType(request.type());
+        transaction.setTransactionDate(request.transactionDate());
+        transaction.setCategory(category);
+    }
+
 }
