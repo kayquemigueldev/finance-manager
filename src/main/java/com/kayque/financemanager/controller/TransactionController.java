@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.kayque.financemanager.dto.UpdateTransactionRequest;
+import com.kayque.financemanager.entity.TransactionType;
 
 import java.util.List;
 
@@ -29,8 +30,11 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<TransactionResponse> findAll(Authentication authentication) {
-        return service.findAllByUser(authentication.getName());
+    public List<TransactionResponse> findAll(
+            @RequestParam(required = false) TransactionType type,
+            Authentication authentication
+    ) {
+        return service.findAllByUser(authentication.getName(), type);
     }
 
     @GetMapping("/{id}")

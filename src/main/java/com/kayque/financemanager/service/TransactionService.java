@@ -15,6 +15,7 @@ import com.kayque.financemanager.dto.UpdateTransactionRequest;
 import com.kayque.financemanager.exception.CategoryNotFoundException;
 import com.kayque.financemanager.exception.TransactionNotFoundException;
 import com.kayque.financemanager.exception.UserNotFoundException;
+import com.kayque.financemanager.entity.TransactionType;
 
 import java.util.List;
 
@@ -41,20 +42,28 @@ public class TransactionService {
         return transactionMapper.toResponse(savedTransaction);
     }
 
-    public List<TransactionResponse> findAllByUser(String email) {
+    public List<TransactionResponse> findAllByUser(String email, TransactionType type) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        return transactionRepository.findByUser(user)
-                .stream()
+        List<Transaction> transactions;
+
+        if (type == null) {
+            transactions = transactionRepository.findByUser(user);
+        } else {
+            transactions = transactionRepository.findByUserAndType(user, type);
+        }
+
+        return transactions.stream()
                 .map(transactionMapper::toResponse)
                 .toList();
     }
 
+
     public TransactionResponse findById(Long id, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Transaction transaction = transactionRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
@@ -68,13 +77,13 @@ public class TransactionService {
             String email
     ) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Transaction transaction = transactionRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
 
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         transactionMapper.updateEntity(transaction, request, category);
 
@@ -86,10 +95,10 @@ public class TransactionService {
     public void delete(Long id, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Transaction transaction = transactionRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
 
         transactionRepository.delete(transaction);
     }
