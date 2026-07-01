@@ -6,6 +6,7 @@ import com.kayque.financemanager.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,5 +20,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse create(@RequestBody @Valid CreateUserRequest request) {
         return userService.create(request);
+    }
+
+    @GetMapping("/me")
+    public UserResponse getAuthenticatedUser(Authentication authentication) {
+        return userService.getAuthenticatedUser(authentication.getName());
     }
 }
