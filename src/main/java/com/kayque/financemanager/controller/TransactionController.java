@@ -1,0 +1,34 @@
+package com.kayque.financemanager.controller;
+
+import com.kayque.financemanager.dto.TransactionRequest;
+import com.kayque.financemanager.dto.TransactionResponse;
+import com.kayque.financemanager.service.TransactionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/transactions")
+@RequiredArgsConstructor
+public class TransactionController {
+
+    private final TransactionService service;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionResponse create(
+            @RequestBody @Valid TransactionRequest request,
+            Authentication authentication
+    ) {
+        return service.create(request, authentication.getName());
+    }
+
+    @GetMapping
+    public List<TransactionResponse> findAll(Authentication authentication) {
+        return service.findAllByUser(authentication.getName());
+    }
+}

@@ -12,6 +12,8 @@ import com.kayque.financemanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
@@ -34,4 +36,16 @@ public class TransactionService {
 
         return transactionMapper.toResponse(savedTransaction);
     }
+
+    public List<TransactionResponse> findAllByUser(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return transactionRepository.findByUser(user)
+                .stream()
+                .map(transactionMapper::toResponse)
+                .toList();
+    }
+
 }
